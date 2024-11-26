@@ -95,6 +95,16 @@ vmCvar_t	g_enableDust;
 vmCvar_t	g_enableBreath;
 vmCvar_t	g_proxMineTimeout;
 #endif
+// FMz: redefine extern gun game weapon order
+vmCvar_t g_weaponOrder1;
+vmCvar_t g_weaponOrder2;
+vmCvar_t g_weaponOrder3;
+vmCvar_t g_weaponOrder4;
+vmCvar_t g_weaponOrder5;
+vmCvar_t g_weaponOrder6;
+vmCvar_t g_weaponOrder7;
+vmCvar_t g_weaponOrder8;
+vmCvar_t g_weaponOrder9;
 
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -178,7 +188,17 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO, 0, qfalse},
 
 	{ &g_rankings, "g_rankings", "0", 0, 0, qfalse},
-	{ &g_localTeamPref, "g_localTeamPref", "", 0, 0, qfalse }
+	{ &g_localTeamPref, "g_localTeamPref", "", 0, 0, qfalse },
+	// FMz: gun game vars
+	{ &g_weaponOrder1, "g_weaponOrder1", "5", 0, 0, qfalse}, // RL
+	{ &g_weaponOrder2, "g_weaponOrder2", "8", 0, 0, qfalse}, // plasma
+	{ &g_weaponOrder3, "g_weaponOrder3", "3", 0, 0, qfalse}, // shotgun
+	{ &g_weaponOrder4, "g_weaponOrder4", "6", 0, 0, qfalse}, // LG
+	{ &g_weaponOrder5, "g_weaponOrder5", "7", 0, 0, qfalse}, // RG
+	{ &g_weaponOrder6, "g_weaponOrder6", "4", 0, 0, qfalse}, // Grenade Launcher
+	{ &g_weaponOrder7, "g_weaponOrder7", "2", 0, 0, qfalse}, // Machine Gun
+	{ &g_weaponOrder8, "g_weaponOrder8", "9", 0, 0, qfalse}, // BFG
+	{ &g_weaponOrder9, "g_weaponOrder9", "", 0, 0, qfalse}, // unused
 
 };
 

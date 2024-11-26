@@ -209,6 +209,172 @@ void TossClientPersistantPowerups( gentity_t *ent ) {
 #endif
 
 
+// FMz: gun Game GetWeapon
+int GetWeapon(int currentOrderNumber)
+{
+	G_Printf("GetWeapon: %d\n", currentOrderNumber);
+	switch (currentOrderNumber)
+	{
+	case 1:
+		if (!strcmp(g_weaponOrder1.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder1.integer;
+		}
+		break;
+	case 2:
+		if (!strcmp(g_weaponOrder2.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder2.integer;
+		}
+	break;
+	case 3:
+		if (!strcmp(g_weaponOrder3.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder3.integer;
+		}
+	break;
+	case 4:
+		if (!strcmp(g_weaponOrder4.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder4.integer;
+		}
+	break;
+	case 5:
+		if (!strcmp(g_weaponOrder5.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder5.integer;
+		}
+	break;
+	case 6:
+		if (!strcmp(g_weaponOrder6.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder6.integer;
+		}
+	break;
+	case 7:
+		if (!strcmp(g_weaponOrder7.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder7.integer;
+		}
+	break;
+	case 8:
+		if (!strcmp(g_weaponOrder8.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder8.integer;
+		}
+	break;
+	case 9:
+		if (!strcmp(g_weaponOrder9.string, ""))
+		{
+			return -1;
+		} else {
+			return g_weaponOrder9.integer;
+		}
+	break;
+	default:
+		return -1;
+		break;
+	}
+}
+
+int GetFinalWeapon(void)
+{
+	if(strcmp(g_weaponOrder9.string, "") != 0 && g_weaponOrder9.integer > 0 &&
+		g_weaponOrder9.integer < WP_NUM_WEAPONS && g_weaponOrder9.integer != WP_GRAPPLING_HOOK)
+	{
+		return 9;
+	}
+	if(strcmp(g_weaponOrder8.string, "") != 0 && g_weaponOrder8.integer > 0 &&
+		g_weaponOrder8.integer < WP_NUM_WEAPONS && g_weaponOrder8.integer != WP_GRAPPLING_HOOK)
+	{ 
+		return 8;
+	}
+	if(strcmp(g_weaponOrder7.string, "") != 0 && g_weaponOrder7.integer > 0 &&
+		g_weaponOrder7.integer < WP_NUM_WEAPONS && g_weaponOrder7.integer != WP_GRAPPLING_HOOK)
+	{ 
+		return 7;
+	}
+	if(strcmp(g_weaponOrder6.string, "") != 0 && g_weaponOrder6.integer > 0 &&
+		g_weaponOrder6.integer < WP_NUM_WEAPONS && g_weaponOrder6.integer != WP_GRAPPLING_HOOK)
+	{ 
+		return 6;
+	}
+	if(strcmp(g_weaponOrder5.string, "") != 0 && g_weaponOrder5.integer > 0 &&
+		g_weaponOrder5.integer < WP_NUM_WEAPONS && g_weaponOrder5.integer != WP_GRAPPLING_HOOK)
+	{ 
+		return 5;
+	}
+	if(strcmp(g_weaponOrder4.string, "") != 0 && g_weaponOrder4.integer > 0 &&
+		g_weaponOrder4.integer < WP_NUM_WEAPONS && g_weaponOrder4.integer != WP_GRAPPLING_HOOK)
+	{ 
+		return 4;
+	}
+	if(strcmp(g_weaponOrder3.string, "") != 0 && g_weaponOrder3.integer > 0 &&
+		g_weaponOrder3.integer < WP_NUM_WEAPONS && g_weaponOrder3.integer != WP_GRAPPLING_HOOK)
+	{ 
+		return 3;
+	}
+	if(strcmp(g_weaponOrder2.string, "") != 0 && g_weaponOrder2.integer > 0 &&
+		g_weaponOrder2.integer < WP_NUM_WEAPONS && g_weaponOrder2.integer != WP_GRAPPLING_HOOK)
+	{ 
+		return 2;
+	}
+	if(strcmp(g_weaponOrder1.string, "") != 0 && g_weaponOrder1.integer > 0 &&
+		g_weaponOrder1.integer < WP_NUM_WEAPONS && g_weaponOrder1.integer != WP_GRAPPLING_HOOK)
+	{ 
+		return 1;
+	}
+	return 1;
+}
+
+// FMz: go to next weapon in gun game
+void ProgressWeapon(gentity_t *ent, qboolean reset)
+{
+	int weapon;
+
+	ent->client->ps.ammo[GetWeapon(ent->client->currentWeaponIndex)] = 0;
+	ent->client->ps.stats[STAT_WEAPONS] = 0;
+
+	if (reset == qfalse)
+	{
+		ent->client->currentWeaponIndex += 1;
+	}
+	else
+	{
+		ent->client->currentWeaponIndex = 1;
+	}
+	weapon = GetWeapon(ent->client->currentWeaponIndex);
+	while (weapon < 1 || weapon > WP_NUM_WEAPONS || weapon == WP_GRAPPLING_HOOK)
+	{
+		ent->client->currentWeaponIndex += 1;
+		weapon = GetWeapon(ent->client->currentWeaponIndex);
+	}
+	
+	// activate weapon at currentWeaponIndex()
+	G_Printf("activate weapon at currentWeaponIndex() [%d, %d]\n", weapon, ent->client->currentWeaponIndex);
+	ent->client->ps.stats[STAT_WEAPONS] = (1 << weapon);
+	// -1 = infinite
+	ent->client->ps.ammo[weapon] = -1;
+	ent->client->ps.weapon = weapon;
+	ent->client->ps.weaponstate = WEAPON_READY;
+}
+
 /*
 ==================
 LookAtKiller
@@ -502,13 +668,23 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 	self->client->ps.persistant[PERS_KILLED]++;
 
+	// FMz: add gungame logic here
 	if (attacker && attacker->client) {
 		attacker->client->lastkilled_client = self->s.number;
 
 		if ( attacker == self || OnSameTeam (self, attacker ) ) {
 			AddScore( attacker, self->r.currentOrigin, -1 );
 		} else {
-			AddScore( attacker, self->r.currentOrigin, 1 );
+			if (attacker->client->currentWeaponIndex != GetFinalWeapon())
+			{
+				AddScore( attacker, self->r.currentOrigin, 1 );
+				ProgressWeapon(attacker, qfalse);
+			}
+			else
+			{
+				AddScore( attacker, self->r.currentOrigin, 10 );
+				ProgressWeapon(attacker, qtrue);
+			}
 
 			if( meansOfDeath == MOD_GAUNTLET ) {
 				

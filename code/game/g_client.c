@@ -1056,6 +1056,7 @@ void ClientSpawn(gentity_t *ent) {
 //	char	*savedAreaBits;
 	int		accuracy_hits, accuracy_shots;
 	int		eventSequence;
+	int		weapon;
 	char	userinfo[MAX_INFO_STRING];
 
 	index = ent - g_entities;
@@ -1164,16 +1165,21 @@ void ClientSpawn(gentity_t *ent) {
 
 	client->ps.clientNum = index;
 
-	client->ps.stats[STAT_WEAPONS] = ( 1 << WP_MACHINEGUN );
-	if ( g_gametype.integer == GT_TEAM ) {
-		client->ps.ammo[WP_MACHINEGUN] = 50;
-	} else {
-		client->ps.ammo[WP_MACHINEGUN] = 100;
-	}
+	// FMz: comment out these lines to replace them with the current index
+	// client->ps.stats[STAT_WEAPONS] = ( 1 << WP_MACHINEGUN );
+	// if ( g_gametype.integer == GT_TEAM ) {
+	// 	client->ps.ammo[WP_MACHINEGUN] = 50;
+	// } else {
+	// 	client->ps.ammo[WP_MACHINEGUN] = 100;
+	// }
 
-	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
-	client->ps.ammo[WP_GAUNTLET] = -1;
-	client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
+	// client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
+	// client->ps.ammo[WP_GAUNTLET] = -1;
+	// client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
+	ProgressWeapon(ent, qtrue);
+	weapon = GetWeapon(client->currentWeaponIndex);
+	client->ps.stats[STAT_WEAPONS] = (1 << weapon);
+	client->ps.ammo[weapon] = -1;
 
 	// health will count down towards max_health
 	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] + 25;
@@ -1201,20 +1207,23 @@ void ClientSpawn(gentity_t *ent) {
 	if (!level.intermissiontime) {
 		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR) {
 			G_KillBox(ent);
+			G_Printf("Reset player stats and weapons to (%d)\n", weapon);
+			client->ps.weapon = weapon;
+			// FMz: comment in-place highest weapon
 			// force the base weapon up
-			client->ps.weapon = WP_MACHINEGUN;
-			client->ps.weaponstate = WEAPON_READY;
+			// client->ps.weapon = WP_MACHINEGUN;
+			// client->ps.weaponstate = WEAPON_READY;
 			// fire the targets of the spawn point
 			G_UseTargets(spawnPoint, ent);
 			// select the highest weapon number available, after any spawn given items have fired
-			client->ps.weapon = 1;
+			// client->ps.weapon = 1;
 
-			for (i = WP_NUM_WEAPONS - 1 ; i > 0 ; i--) {
-				if (client->ps.stats[STAT_WEAPONS] & (1 << i)) {
-					client->ps.weapon = i;
-					break;
-				}
-			}
+			// for (i = WP_NUM_WEAPONS - 1 ; i > 0 ; i--) {
+			// 	if (client->ps.stats[STAT_WEAPONS] & (1 << i)) {
+			// 		client->ps.weapon = i;
+			// 		break;
+			// 	}
+			// }
 			// positively link the client, even if the command times are weird
 			VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
 

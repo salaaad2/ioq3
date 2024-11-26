@@ -315,6 +315,8 @@ struct gclient_s {
 	int			ammoTimes[WP_NUM_WEAPONS];
 	int			invulnerabilityTime;
 #endif
+	// FMz: gun game current weapon index
+	int currentWeaponIndex;
 
 	char		*areabits;
 };
@@ -498,6 +500,8 @@ void TossClientItems( gentity_t *self );
 void TossClientPersistantPowerups( gentity_t *self );
 #endif
 void TossClientCubes( gentity_t *self );
+void ProgressWeapon(gentity_t *ent, qboolean reset);
+int GetWeapon(int currentOrderNumber);
 
 // damage flags
 #define DAMAGE_RADIUS				0x00000001	// damage was indirect
@@ -745,6 +749,16 @@ extern	vmCvar_t	g_enableBreath;
 extern	vmCvar_t	g_singlePlayer;
 extern	vmCvar_t	g_proxMineTimeout;
 extern	vmCvar_t	g_localTeamPref;
+// FMz: gun game weapon order
+extern vmCvar_t g_weaponOrder1;
+extern vmCvar_t g_weaponOrder2;
+extern vmCvar_t g_weaponOrder3;
+extern vmCvar_t g_weaponOrder4;
+extern vmCvar_t g_weaponOrder5;
+extern vmCvar_t g_weaponOrder6;
+extern vmCvar_t g_weaponOrder7;
+extern vmCvar_t g_weaponOrder8;
+extern vmCvar_t g_weaponOrder9;
 
 void	trap_Print( const char *text );
 void	trap_Error( const char *text ) __attribute__((noreturn));
