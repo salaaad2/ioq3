@@ -75,35 +75,36 @@ Toss the weapon and powerups for the killed player
 */
 void TossClientItems( gentity_t *self ) {
 	gitem_t		*item;
-	int			weapon;
+	// int			weapon;
 	float		angle;
 	int			i;
 	gentity_t	*drop;
 
 	// drop the weapon if not a gauntlet or machinegun
-	weapon = self->s.weapon;
+	// weapon = self->s.weapon;
 
 	// make a special check to see if they are changing to a new
 	// weapon that isn't the mg or gauntlet.  Without this, a client
 	// can pick up a weapon, be killed, and not drop the weapon because
 	// their weapon change hasn't completed yet and they are still holding the MG.
-	if ( weapon == WP_MACHINEGUN || weapon == WP_GRAPPLING_HOOK ) {
-		if ( self->client->ps.weaponstate == WEAPON_DROPPING ) {
-			weapon = self->client->pers.cmd.weapon;
-		}
-		if ( !( self->client->ps.stats[STAT_WEAPONS] & ( 1 << weapon ) ) ) {
-			weapon = WP_NONE;
-		}
-	}
-
-	if ( weapon > WP_MACHINEGUN && weapon != WP_GRAPPLING_HOOK && 
-		self->client->ps.ammo[ weapon ] ) {
-		// find the item type for this weapon
-		item = BG_FindItemForWeapon( weapon );
-
-		// spawn the item
-		Drop_Item( self, item, 0 );
-	}
+	// FMz: prevent weapon drop
+// 	if ( weapon == WP_MACHINEGUN || weapon == WP_GRAPPLING_HOOK ) {
+// 		if ( self->client->ps.weaponstate == WEAPON_DROPPING ) {
+// 			weapon = self->client->pers.cmd.weapon;
+// 		}
+// 		if ( !( self->client->ps.stats[STAT_WEAPONS] & ( 1 << weapon ) ) ) {
+// 			weapon = WP_NONE;
+// 		}
+// 	}
+// 
+// 	if ( weapon > WP_MACHINEGUN && weapon != WP_GRAPPLING_HOOK && 
+// 		self->client->ps.ammo[ weapon ] ) {
+// 		// find the item type for this weapon
+// 		item = BG_FindItemForWeapon( weapon );
+// 
+// 		// spawn the item
+// 		Drop_Item( self, item, 0 );
+// 	}
 
 	// drop all the powerups if not in teamplay
 	if ( g_gametype.integer != GT_TEAM ) {
@@ -348,8 +349,11 @@ void ProgressWeapon(gentity_t *ent, qboolean reset)
 {
 	int weapon;
 
-	ent->client->ps.ammo[GetWeapon(ent->client->currentWeaponIndex)] = 0;
-	ent->client->ps.stats[STAT_WEAPONS] = 0;
+	weapon = GetWeapon(ent->client->currentWeaponIndex);
+	if (weapon != -1)
+	{
+		ent->client->ps.ammo[weapon] = 0;
+	}
 
 	if (reset == qfalse)
 	{
@@ -603,6 +607,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	int			contents;
 	int			killer;
 	int			i;
+	int			finalWeaponIndex;
 	char		*killerName, *obit;
 
 	if ( self->client->ps.pm_type == PM_DEAD ) {
@@ -669,16 +674,35 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	self->client->ps.persistant[PERS_KILLED]++;
 
 	// FMz: add gungame logic here
+	finalWeaponIndex = GetFinalWeapon();
 	if (attacker && attacker->client) {
 		attacker->client->lastkilled_client = self->s.number;
 
 		if ( attacker == self || OnSameTeam (self, attacker ) ) {
 			AddScore( attacker, self->r.currentOrigin, -1 );
 		} else {
-			if (attacker->client->currentWeaponIndex != GetFinalWeapon())
+			if (attacker->client->currentWeaponIndex != finalWeaponIndex)
 			{
 				AddScore( attacker, self->r.currentOrigin, 1 );
 				ProgressWeapon(attacker, qfalse);
+				if (attacker->client->currentWeaponIndex == finalWeaponIndex)
+				{
+					char *finalWeaponName;
+
+					switch (GetFinalWeapon())
+					{
+					case WP_GAUNTLET         : finalWeaponName = "Gauntlet"; break;
+					case WP_MACHINEGUN       : finalWeaponName = "Machinegun"; break;
+					case WP_SHOTGUN          : finalWeaponName = "Shotgun"; break;
+					case WP_GRENADE_LAUNCHER : finalWeaponName = "Grenade Launcher"; break;
+					case WP_ROCKET_LAUNCHER  : finalWeaponName = "Rocket Launcher"; break;
+					case WP_LIGHTNING        : finalWeaponName = "Lightninggun"; break;
+					case WP_RAILGUN          : finalWeaponName = "Railgun"; break;
+					case WP_PLASMAGUN        : finalWeaponName = "Plasmagun"; break;
+					case WP_BFG              : finalWeaponName = "BFG"; break;
+					}
+					trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE " has the %s!\n\"", attacker->client->pers.netname, finalWeaponName));
+				}
 			}
 			else
 			{
