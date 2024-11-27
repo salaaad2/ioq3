@@ -544,16 +544,15 @@ static void CG_DrawStatusBar( void ) {
 
 	VectorClear( angles );
 
-	// FMz: comment ammo count
 	// draw any 3D icons first, so the changes back to 2D are minimized
-	// if ( cent->currentState.weapon && cg_weapons[ cent->currentState.weapon ].ammoModel ) {
-	// 	origin[0] = 70;
-	// 	origin[1] = 0;
-	// 	origin[2] = 0;
-	// 	angles[YAW] = 90 + 20 * sin( cg.time / 1000.0 );
-	// 	CG_Draw3DModel( CHAR_WIDTH*3 + TEXT_ICON_SPACE, 432, ICON_SIZE, ICON_SIZE,
-	// 				   cg_weapons[ cent->currentState.weapon ].ammoModel, 0, origin, angles );
-	// }
+	if ( cent->currentState.weapon && cg_weapons[ cent->currentState.weapon ].ammoModel ) {
+		origin[0] = 70;
+		origin[1] = 0;
+		origin[2] = 0;
+		angles[YAW] = 90 + 20 * sin( cg.time / 1000.0 );
+		CG_Draw3DModel( CHAR_WIDTH*3 + TEXT_ICON_SPACE, 432, ICON_SIZE, ICON_SIZE,
+					   cg_weapons[ cent->currentState.weapon ].ammoModel, 0, origin, angles );
+	}
 
 	CG_DrawStatusBarHead( 185 + CHAR_WIDTH*3 + TEXT_ICON_SPACE );
 
@@ -2287,12 +2286,21 @@ CG_DrawAmmoWarning
 static void CG_DrawAmmoWarning( void ) {
 	const char	*s;
 	int			w;
+	centity_t * cent;
+	playerState_t	*ps;
 
 	if ( cg_drawAmmoWarning.integer == 0 ) {
 		return;
 	}
 
 	if ( !cg.lowAmmoWarning ) {
+		return;
+	}
+
+	cent = &cg_entities[cg.snap->ps.clientNum];
+	ps = &cg.snap->ps;
+	if (ps->ammo[cent->currentState.weapon] == -1 )
+	{
 		return;
 	}
 
@@ -2566,8 +2574,7 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 			CG_DrawStatusBar();
 #endif
       
-	  		// FMz: comment ammo warning
-			//CG_DrawAmmoWarning();
+			CG_DrawAmmoWarning();
 
 #ifdef MISSIONPACK
 			CG_DrawProxWarning();

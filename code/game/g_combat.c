@@ -75,36 +75,35 @@ Toss the weapon and powerups for the killed player
 */
 void TossClientItems( gentity_t *self ) {
 	gitem_t		*item;
-	// int			weapon;
+	int			weapon;
 	float		angle;
 	int			i;
 	gentity_t	*drop;
 
-	// drop the weapon if not a gauntlet or machinegun
-	// weapon = self->s.weapon;
+	// drop the weapon if not a gauntlet or machinegun or the tp hand
+	weapon = self->s.weapon;
 
 	// make a special check to see if they are changing to a new
 	// weapon that isn't the mg or gauntlet.  Without this, a client
 	// can pick up a weapon, be killed, and not drop the weapon because
 	// their weapon change hasn't completed yet and they are still holding the MG.
-	// FMz: prevent weapon drop
-// 	if ( weapon == WP_MACHINEGUN || weapon == WP_GRAPPLING_HOOK ) {
-// 		if ( self->client->ps.weaponstate == WEAPON_DROPPING ) {
-// 			weapon = self->client->pers.cmd.weapon;
-// 		}
-// 		if ( !( self->client->ps.stats[STAT_WEAPONS] & ( 1 << weapon ) ) ) {
-// 			weapon = WP_NONE;
-// 		}
-// 	}
-// 
-// 	if ( weapon > WP_MACHINEGUN && weapon != WP_GRAPPLING_HOOK && 
-// 		self->client->ps.ammo[ weapon ] ) {
-// 		// find the item type for this weapon
-// 		item = BG_FindItemForWeapon( weapon );
-// 
-// 		// spawn the item
-// 		Drop_Item( self, item, 0 );
-// 	}
+	if ( weapon == WP_MACHINEGUN || weapon == WP_GRAPPLING_HOOK ) {
+		if ( self->client->ps.weaponstate == WEAPON_DROPPING ) {
+			weapon = self->client->pers.cmd.weapon;
+		}
+		if ( !( self->client->ps.stats[STAT_WEAPONS] & ( 1 << weapon ) ) ) {
+			weapon = WP_NONE;
+		}
+	}
+
+	if ( weapon > WP_MACHINEGUN && weapon != WP_GRAPPLING_HOOK && weapon != WP_TPHAND &&
+		self->client->ps.ammo[ weapon ] ) {
+		// find the item type for this weapon
+		item = BG_FindItemForWeapon( weapon );
+
+   		// spawn the item
+		Drop_Item( self, item, 0 );
+	}
 
 	// drop all the powerups if not in teamplay
 	if ( g_gametype.integer != GT_TEAM ) {
@@ -208,176 +207,6 @@ void TossClientPersistantPowerups( gentity_t *ent ) {
 	ent->client->persistantPowerup = NULL;
 }
 #endif
-
-
-// FMz: gun Game GetWeapon
-int GetWeapon(int currentOrderNumber)
-{
-	G_Printf("GetWeapon: %d\n", currentOrderNumber);
-	switch (currentOrderNumber)
-	{
-	case 1:
-		if (!strcmp(g_weaponOrder1.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder1.integer;
-		}
-		break;
-	case 2:
-		if (!strcmp(g_weaponOrder2.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder2.integer;
-		}
-	break;
-	case 3:
-		if (!strcmp(g_weaponOrder3.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder3.integer;
-		}
-	break;
-	case 4:
-		if (!strcmp(g_weaponOrder4.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder4.integer;
-		}
-	break;
-	case 5:
-		if (!strcmp(g_weaponOrder5.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder5.integer;
-		}
-	break;
-	case 6:
-		if (!strcmp(g_weaponOrder6.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder6.integer;
-		}
-	break;
-	case 7:
-		if (!strcmp(g_weaponOrder7.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder7.integer;
-		}
-	break;
-	case 8:
-		if (!strcmp(g_weaponOrder8.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder8.integer;
-		}
-	break;
-	case 9:
-		if (!strcmp(g_weaponOrder9.string, ""))
-		{
-			return -1;
-		} else {
-			return g_weaponOrder9.integer;
-		}
-	break;
-	default:
-		return -1;
-		break;
-	}
-}
-
-int GetFinalWeapon(void)
-{
-	if(strcmp(g_weaponOrder9.string, "") != 0 && g_weaponOrder9.integer > 0 &&
-		g_weaponOrder9.integer < WP_NUM_WEAPONS && g_weaponOrder9.integer != WP_GRAPPLING_HOOK)
-	{
-		return 9;
-	}
-	if(strcmp(g_weaponOrder8.string, "") != 0 && g_weaponOrder8.integer > 0 &&
-		g_weaponOrder8.integer < WP_NUM_WEAPONS && g_weaponOrder8.integer != WP_GRAPPLING_HOOK)
-	{ 
-		return 8;
-	}
-	if(strcmp(g_weaponOrder7.string, "") != 0 && g_weaponOrder7.integer > 0 &&
-		g_weaponOrder7.integer < WP_NUM_WEAPONS && g_weaponOrder7.integer != WP_GRAPPLING_HOOK)
-	{ 
-		return 7;
-	}
-	if(strcmp(g_weaponOrder6.string, "") != 0 && g_weaponOrder6.integer > 0 &&
-		g_weaponOrder6.integer < WP_NUM_WEAPONS && g_weaponOrder6.integer != WP_GRAPPLING_HOOK)
-	{ 
-		return 6;
-	}
-	if(strcmp(g_weaponOrder5.string, "") != 0 && g_weaponOrder5.integer > 0 &&
-		g_weaponOrder5.integer < WP_NUM_WEAPONS && g_weaponOrder5.integer != WP_GRAPPLING_HOOK)
-	{ 
-		return 5;
-	}
-	if(strcmp(g_weaponOrder4.string, "") != 0 && g_weaponOrder4.integer > 0 &&
-		g_weaponOrder4.integer < WP_NUM_WEAPONS && g_weaponOrder4.integer != WP_GRAPPLING_HOOK)
-	{ 
-		return 4;
-	}
-	if(strcmp(g_weaponOrder3.string, "") != 0 && g_weaponOrder3.integer > 0 &&
-		g_weaponOrder3.integer < WP_NUM_WEAPONS && g_weaponOrder3.integer != WP_GRAPPLING_HOOK)
-	{ 
-		return 3;
-	}
-	if(strcmp(g_weaponOrder2.string, "") != 0 && g_weaponOrder2.integer > 0 &&
-		g_weaponOrder2.integer < WP_NUM_WEAPONS && g_weaponOrder2.integer != WP_GRAPPLING_HOOK)
-	{ 
-		return 2;
-	}
-	if(strcmp(g_weaponOrder1.string, "") != 0 && g_weaponOrder1.integer > 0 &&
-		g_weaponOrder1.integer < WP_NUM_WEAPONS && g_weaponOrder1.integer != WP_GRAPPLING_HOOK)
-	{ 
-		return 1;
-	}
-	return 1;
-}
-
-// FMz: go to next weapon in gun game
-void ProgressWeapon(gentity_t *ent, qboolean reset)
-{
-	int weapon;
-
-	weapon = GetWeapon(ent->client->currentWeaponIndex);
-	if (weapon != -1)
-	{
-		ent->client->ps.ammo[weapon] = 0;
-	}
-
-	if (reset == qfalse)
-	{
-		ent->client->currentWeaponIndex += 1;
-	}
-	else
-	{
-		ent->client->currentWeaponIndex = 1;
-	}
-	weapon = GetWeapon(ent->client->currentWeaponIndex);
-	while (weapon < 1 || weapon > WP_NUM_WEAPONS || weapon == WP_GRAPPLING_HOOK)
-	{
-		ent->client->currentWeaponIndex += 1;
-		weapon = GetWeapon(ent->client->currentWeaponIndex);
-	}
-	
-	// activate weapon at currentWeaponIndex()
-	G_Printf("activate weapon at currentWeaponIndex() [%d, %d]\n", weapon, ent->client->currentWeaponIndex);
-	ent->client->ps.stats[STAT_WEAPONS] = (1 << weapon);
-	// -1 = infinite
-	ent->client->ps.ammo[weapon] = -1;
-	ent->client->ps.weapon = weapon;
-	ent->client->ps.weaponstate = WEAPON_READY;
-}
 
 /*
 ==================

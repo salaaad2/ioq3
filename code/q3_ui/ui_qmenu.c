@@ -1622,7 +1622,7 @@ sfxHandle_t Menu_DefaultKey( menuframework_s *m, int key )
 	{
 		case K_MOUSE2:
 		case K_ESCAPE:
-		 	// FMz: tapping escape while in the menu will quit
+		 	// tapping escape while in the menu will quit
 			trap_Cmd_ExecuteText(EXEC_NOW, "quit\n");
 			//UI_PopMenu();
 			return menu_out_sound;

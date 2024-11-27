@@ -1164,7 +1164,7 @@ void ClientSpawn(gentity_t *ent) {
 
 	client->ps.clientNum = index;
 
-	// FMz: add 3 weapons: tp_hand, machinegun and gauntlet
+	// 3 weapons: tp_hand, machinegun and gauntlet
 	client->ps.stats[STAT_WEAPONS] = ( 1 << WP_TPHAND ) | (1 << WP_MACHINEGUN) | ( 1 << WP_GAUNTLET );
 	if ( g_gametype.integer == GT_TEAM ) {
 		client->ps.ammo[WP_MACHINEGUN] = 50;
@@ -1202,7 +1202,7 @@ void ClientSpawn(gentity_t *ent) {
 	if (!level.intermissiontime) {
 		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR) {
 			G_KillBox(ent);
-			// FMz: comment in-place highest weapon
+			// comment in-place highest weapon
 			// force the base weapon up
 			client->ps.weapon = WP_TPHAND;
 			client->ps.weaponstate = WEAPON_READY;

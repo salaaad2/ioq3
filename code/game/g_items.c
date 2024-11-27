@@ -888,12 +888,6 @@ be on an entity that hasn't spawned yet.
 */
 void G_SpawnItem (gentity_t *ent, gitem_t *item) {
 
-	// FMz: prevent weapons and ammo from spawning
-	if (item->giType == IT_WEAPON || item->giType == IT_AMMO)
-	{
-		return;
-	}
-
 	G_SpawnFloat( "random", "0", &ent->random );
 	G_SpawnFloat( "wait", "0", &ent->wait );
 

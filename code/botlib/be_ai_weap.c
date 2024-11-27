@@ -416,7 +416,7 @@ int BotChooseBestFightWeapon(int weaponstate, int *inventory)
 	//if the bot has no weapon weight configuration
 	if (!ws->weaponweightconfig) return 0;
 
-	// FMz: prevent 0 index of weapon if there is only one (comparison will never proc)
+	// prevent 0 index of weapon if there is only one (comparison will never proc)
 	bestweight = -1;
 	bestweapon = -1;
 	for (i = 0; i < wc->numweapons; i++)

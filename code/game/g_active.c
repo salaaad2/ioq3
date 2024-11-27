@@ -960,7 +960,7 @@ void ClientThink_real( gentity_t *ent ) {
 	SendPendingPredictableEvents( &ent->client->ps );
 
 	if ( !( ent->client->ps.eFlags & EF_FIRING ) ) {
-		client->tpHandHeld = qfalse;		// for tp hand
+		client->tpHandHeld = qfalse;
 	}
 	if ( !( ent->client->ps.eFlags & EF_FIRING ) ) {
 		client->fireHeld = qfalse;		// for grapple

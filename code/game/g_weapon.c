@@ -238,7 +238,7 @@ void Bullet_Fire (gentity_t *ent, float spread, int damage, int mod ) {
 /*
 ======================================================================
 
-Teleporter Hand (doshonored blink)
+Teleporter Hand (dishonored blink)
 
 ======================================================================
 */
@@ -263,10 +263,9 @@ void Weapon_TPHandFree (gentity_t *ent)
 
 void Weapon_TPHandThink (gentity_t *ent)
 {
-	// VectorCopy( ent->parent->client->tpGhost->r.currentOrigin, ent->parent->r.currentOrigin);
 	update_tphand_ghost(ent, muzzle, forward);
 
-	ent->nextthink = level.time + 50;
+	ent->nextthink = level.time + 1;
 }
 
 /*
