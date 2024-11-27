@@ -710,6 +710,79 @@ gentity_t *fire_grapple (gentity_t *self, vec3_t start, vec3_t dir) {
 	return hook;
 }
 
+void update_tphand_ghost(gentity_t *ghost, vec3_t start, vec3_t dir)
+{
+	vec3_t end;
+	trace_t tr;
+	VectorNormalize(dir);
+    VectorMA(start, 250, dir, end);
+
+	trap_Trace(&tr, start, NULL, NULL, end, ghost->s.number, MASK_PLAYERSOLID);
+	if (tr.fraction < 1.0f)
+	{
+        VectorMA(tr.endpos, 60.0f, tr.plane.normal, tr.endpos);
+	}
+	SnapVector(ghost->s.pos.trDelta);
+	VectorCopy(tr.endpos, ghost->s.pos.trBase);
+	VectorCopy(tr.endpos, ghost->r.currentOrigin);
+	VectorCopy(tr.endpos, ghost->s.origin);
+}
+
+void create_tphand_ghost(gentity_t *self, vec3_t start, vec3_t dir)
+{
+	gentity_t * ghost;
+	vec3_t end;
+	trace_t tr;
+
+	VectorNormalize(dir);
+
+    VectorMA(start, 250, dir, end);
+
+	ghost = G_Spawn();
+	// tempEntity ?
+	ghost->classname = "tempEntity";
+	ghost->nextthink = level.time + 100;
+	ghost->think = Weapon_TPHandThink;
+	ghost->s.eType = ET_GENERAL;
+	ghost->s.weapon = WP_TPHAND;
+	ghost->r.svFlags = SVF_USE_CURRENT_ORIGIN;
+	ghost->r.ownerNum = self->s.number;
+	ghost->r.contents = CONTENTS_SOLID;
+	ghost->s.modelindex = G_ModelIndex("models/gibs/skull.md3");
+	if (ghost->s.modelindex == 0)
+	{
+        Com_Printf("Failed to load model: models/gibs/skull.md3\n");
+        G_FreeEntity(ghost);
+        return;
+    }
+	ghost->clipmask = MASK_PLAYERSOLID;
+	ghost->parent = self;
+	ghost->target_ent = NULL;
+
+	ghost->s.pos.trType = TR_LINEAR;
+	ghost->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;
+	ghost->s.otherEntityNum = self->s.number;
+
+	ghost->s.groundEntityNum = self->s.number + 1;
+
+	VectorSet(ghost->s.angles, 1, 1,10);
+
+
+	trap_Trace(&tr, start, NULL, NULL, end, ghost->s.number, MASK_PLAYERSOLID);
+	if (tr.fraction < 1.0f)
+	{
+        VectorMA(tr.endpos, 60.0f, tr.plane.normal, tr.endpos);
+	}
+	SnapVector(ghost->s.pos.trDelta);
+	VectorCopy(tr.endpos, ghost->s.pos.trBase);
+	VectorCopy(tr.endpos, ghost->r.currentOrigin);
+	VectorCopy(tr.endpos, ghost->s.origin);
+	VectorCopy(tr.endpos, ghost->s.origin2);
+
+	self->client->tpGhost = ghost;
+    trap_LinkEntity(ghost);
+}
+
 
 #ifdef MISSIONPACK
 /*

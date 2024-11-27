@@ -858,6 +858,12 @@ void ClientThink_real( gentity_t *ent ) {
 		Weapon_HookFree(client->hook);
 	}
 
+	// Let go of the TP hand when we release the fire key
+	if ( client->ps.weapon == WP_TPHAND &&
+		client->tpGhost && !( ucmd->buttons & BUTTON_ATTACK ) ) {
+		Weapon_TPHandFree(client->tpGhost);
+	}
+
 	// set up for pmove
 	oldEventSequence = client->ps.eventSequence;
 
@@ -953,6 +959,9 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 	SendPendingPredictableEvents( &ent->client->ps );
 
+	if ( !( ent->client->ps.eFlags & EF_FIRING ) ) {
+		client->tpHandHeld = qfalse;		// for tp hand
+	}
 	if ( !( ent->client->ps.eFlags & EF_FIRING ) ) {
 		client->fireHeld = qfalse;		// for grapple
 	}

@@ -607,7 +607,6 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	int			contents;
 	int			killer;
 	int			i;
-	int			finalWeaponIndex;
 	char		*killerName, *obit;
 
 	if ( self->client->ps.pm_type == PM_DEAD ) {
@@ -673,42 +672,13 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 	self->client->ps.persistant[PERS_KILLED]++;
 
-	// FMz: add gungame logic here
-	finalWeaponIndex = GetFinalWeapon();
 	if (attacker && attacker->client) {
 		attacker->client->lastkilled_client = self->s.number;
 
 		if ( attacker == self || OnSameTeam (self, attacker ) ) {
 			AddScore( attacker, self->r.currentOrigin, -1 );
 		} else {
-			if (attacker->client->currentWeaponIndex != finalWeaponIndex)
-			{
-				AddScore( attacker, self->r.currentOrigin, 1 );
-				ProgressWeapon(attacker, qfalse);
-				if (attacker->client->currentWeaponIndex == finalWeaponIndex)
-				{
-					char *finalWeaponName;
-
-					switch (GetFinalWeapon())
-					{
-					case WP_GAUNTLET         : finalWeaponName = "Gauntlet"; break;
-					case WP_MACHINEGUN       : finalWeaponName = "Machinegun"; break;
-					case WP_SHOTGUN          : finalWeaponName = "Shotgun"; break;
-					case WP_GRENADE_LAUNCHER : finalWeaponName = "Grenade Launcher"; break;
-					case WP_ROCKET_LAUNCHER  : finalWeaponName = "Rocket Launcher"; break;
-					case WP_LIGHTNING        : finalWeaponName = "Lightninggun"; break;
-					case WP_RAILGUN          : finalWeaponName = "Railgun"; break;
-					case WP_PLASMAGUN        : finalWeaponName = "Plasmagun"; break;
-					case WP_BFG              : finalWeaponName = "BFG"; break;
-					}
-					trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE " has the %s!\n\"", attacker->client->pers.netname, finalWeaponName));
-				}
-			}
-			else
-			{
-				AddScore( attacker, self->r.currentOrigin, 10 );
-				ProgressWeapon(attacker, qtrue);
-			}
+			AddScore( attacker, self->r.currentOrigin, 1 );
 
 			if( meansOfDeath == MOD_GAUNTLET ) {
 				

@@ -235,6 +235,39 @@ void Bullet_Fire (gentity_t *ent, float spread, int damage, int mod ) {
 	}
 }
 
+/*
+======================================================================
+
+Teleporter Hand (doshonored blink)
+
+======================================================================
+*/
+void TPHandActivate(gentity_t * ent)
+{
+	if (!ent->client->tpHandHeld && !ent->client->tpGhost)
+	{
+		create_tphand_ghost(ent, muzzle, forward);
+	}
+	ent->client->tpHandHeld = qtrue;
+}
+
+void Weapon_TPHandFree (gentity_t *ent)
+{
+	// actually teleport
+	vec3_t angles;
+	VectorCopy(ent->parent->client->ps.viewangles, angles);
+	TeleportPlayer(ent->parent, ent->parent->client->tpGhost->r.currentOrigin, angles);
+	ent->parent->client->tpGhost = NULL;
+	G_FreeEntity( ent );
+}
+
+void Weapon_TPHandThink (gentity_t *ent)
+{
+	// VectorCopy( ent->parent->client->tpGhost->r.currentOrigin, ent->parent->r.currentOrigin);
+	update_tphand_ghost(ent, muzzle, forward);
+
+	ent->nextthink = level.time + 50;
+}
 
 /*
 ======================================================================
@@ -876,6 +909,9 @@ void FireWeapon( gentity_t *ent ) {
 		Bullet_Fire( ent, CHAINGUN_SPREAD, CHAINGUN_DAMAGE, MOD_CHAINGUN );
 		break;
 #endif
+	case WP_TPHAND:
+		TPHandActivate( ent );
+		break;
 	default:
 // FIXME		G_Error( "Bad ent->s.weapon" );
 		break;

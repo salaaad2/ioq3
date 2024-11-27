@@ -303,6 +303,9 @@ struct gclient_s {
 	qboolean	fireHeld;			// used for hook
 	gentity_t	*hook;				// grapple hook if out
 
+	qboolean	tpHandHeld;			// used for tphand (blink)
+	gentity_t	*tpGhost;			// ghost for tphand (blink)
+
 	int			switchTeamTime;		// time the player switched teams
 
 	// timeResidual is used to handle events that happen every second
@@ -526,6 +529,8 @@ gentity_t *fire_grapple (gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_nail( gentity_t *self, vec3_t start, vec3_t forward, vec3_t right, vec3_t up );
 gentity_t *fire_prox( gentity_t *self, vec3_t start, vec3_t aimdir );
 #endif
+void update_tphand_ghost (gentity_t *ghost, vec3_t start, vec3_t dir);
+void create_tphand_ghost (gentity_t *self, vec3_t start, vec3_t dir);
 
 
 //
@@ -559,6 +564,8 @@ void SnapVectorTowards( vec3_t v, vec3_t to );
 qboolean CheckGauntletAttack( gentity_t *ent );
 void Weapon_HookFree (gentity_t *ent);
 void Weapon_HookThink (gentity_t *ent);
+void Weapon_TPHandFree (gentity_t *ent);
+void Weapon_TPHandThink (gentity_t *ent);
 
 
 //
