@@ -265,7 +265,7 @@ void Weapon_TPHandThink (gentity_t *ent)
 {
 	update_tphand_ghost(ent, muzzle, forward);
 
-	ent->nextthink = level.time + 1;
+	ent->nextthink = level.time + 10;
 }
 
 /*

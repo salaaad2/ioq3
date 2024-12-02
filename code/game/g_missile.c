@@ -741,14 +741,14 @@ void create_tphand_ghost(gentity_t *self, vec3_t start, vec3_t dir)
 	ghost = G_Spawn();
 
 	ghost->classname = "tempEntity";
-	ghost->nextthink = level.time + 1;
-	ghost->think = Weapon_TPHandThink;
 
 	ghost->s.eType = ET_GENERAL;
 	ghost->s.weapon = WP_TPHAND;
 	ghost->s.modelindex = G_ModelIndex("models/gibs/skull.md3");
-	ghost->s.pos.trType = TR_LINEAR;
+
+	ghost->s.pos.trType = TR_STATIONARY;
 	ghost->s.pos.trTime = level.time;
+
 	ghost->s.otherEntityNum = self->s.number;
 	ghost->r.ownerNum = self->s.number;
 	ghost->r.contents = CONTENTS_SOLID;
@@ -756,6 +756,9 @@ void create_tphand_ghost(gentity_t *self, vec3_t start, vec3_t dir)
 	ghost->clipmask = MASK_PLAYERSOLID;
 	ghost->parent = self;
 	ghost->target_ent = NULL;
+
+	ghost->nextthink = level.time + 10;
+	ghost->think = Weapon_TPHandThink;
 
 	VectorSet(ghost->s.angles, 1, 1, 1);
 

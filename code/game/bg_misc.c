@@ -918,15 +918,16 @@ Only in One Flag CTF games
 	{
 		"weapon_tphand", 
 		"sound/misc/w_pkup.wav",
-        { "models/weapons2/gauntlet/gauntlet.md3", 
+        // { "models/weapons2/gauntlet/gauntlet.md3", 
+        { "models/weapons2/machinegun/machinegun.md3", 
 		NULL, NULL, NULL},
 /* icon */		"icons/iconw_chaingun",
 /* pickup */	"Teleporter Hand",
-		80,
+		0,
 		IT_WEAPON,
 		WP_TPHAND,
 /* precache */ "",
-/* sounds */ "sound/weapons/vulcan/wvulwind.wav"
+/* sounds */ ""
 	},
 
 	// end of list marker

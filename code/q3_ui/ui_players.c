@@ -138,6 +138,10 @@ tryagain:
 		MAKERGB( pi->flashDlightColor, 0.6f, 0.6f, 1 );
 		break;
 
+	case WP_TPHAND:
+		MAKERGB( pi->flashDlightColor, 0.6f, 0.6f, 1 );
+		break;
+
 	default:
 		MAKERGB( pi->flashDlightColor, 1, 1, 1 );
 		break;

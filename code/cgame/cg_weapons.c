@@ -810,7 +810,10 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
 		break;
 
-	 default:
+	case WP_TPHAND:
+		break;
+
+	default:
 		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 1 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
 		break;
@@ -1895,6 +1898,9 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		}
 
 		radius = 8;
+		break;
+	case WP_TPHAND:
+		radius = 10;
 		break;
 	}
 

@@ -1685,6 +1685,10 @@ static void PM_Weapon( void ) {
 		addTime = 30;
 		break;
 #endif
+	case WP_TPHAND:
+	 	// firing rate
+		addTime = 10;
+		break;
 	}
 
 #ifdef MISSIONPACK
